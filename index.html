@@ -1,0 +1,120 @@
+<!-- 
+*
+* Section one: HTML header
+* This section provides basic metadata about the site and loads CSS files needed to render the page
+*
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Buy The Infinity Chair</title>
+    <meta name="description" content="The Infinity Chair is available now" />
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="css/normalize.css" />
+    <link rel="stylesheet" href="css/global.css" />
+    <!-- Load Stripe.js on your website. -->
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+
+<!--
+*
+* Section two: page body
+* This section defines the content of the page
+*
+-->
+  <body>
+    <div class="sr-root">
+      <div class="sr-main" style="display: flex;">
+        <header class="sr-header">
+          <div class="sr-header__logo"></div>
+        </header>
+        <div class="sr-container">
+          <section class="container">
+            <h1>The Infinity Chair</h1>
+            <h3>You've waited long enough.</h3>
+            <p>It's time for comfort that never ends. The Infinity Chair will lift you to new heights.</p>
+            <p>Let your worries melt away in the soft embrace of The Infinity Chair's Italian fine-grain leather.</p>
+
+            <!-- Update the data-price-id with the information from your Stripe product --> 
+            <button
+              data-checkout-mode="payment"
+              data-price-id="price_1KxanaJVUdzEtBVamaxTdoz6"
+            >
+              Own it for just $3450
+            </button>
+
+
+          </section>
+          <section class="container">
+            <img src="images/infinity-chair.jpg"></img>
+          </section>
+        </div>
+        <p></p><h1>Reach Infinity.</h1>
+        <div id="error-message"></div>
+      </div>
+    </div>
+    <div class="banner">
+      <span>
+        This is a modified version of a
+        <a href="https://github.com/stripe-samples"> Stripe Sample</a>.
+        <a
+          href="https://github.com/stripe-samples/github-pages-stripe-checkout"
+        >
+          View the original.
+        </a>
+      </span>
+    </div>
+
+  <!--
+  *
+  * Section three: the Stripe script
+  * This section creates the clickable button to pass a session to Stripe Checkout
+  *  
+  -->
+    <script>
+      // Replace with your own publishable key: https://dashboard.stripe.com/test/apikeys
+      var PUBLISHABLE_KEY = 'pk_test_51K6ieaJVUdzEtBVaAO55gn52J9bjwzCZrQz6B93Fcj7faPe6jCLTxwxeu8LCuj2lloM8fNznU1TrNhrpRdEvc1xN00brPVvday';
+
+      var DOMAIN = location.href.replace(/[^/]*$/, '');
+
+      if (PUBLISHABLE_KEY === 'pk_test_51K6ieaJVUdzEtBVaAO55gn52J9bjwzCZrQz6B93Fcj7faPe6jCLTxwxeu8LCuj2lloM8fNznU1TrNhrpRdEvc1xN00brPVvday') {
+        console.log(
+          'Replace the hardcoded publishable key with your own publishable key: https://dashboard.stripe.com/test/apikeys'
+        );
+      }
+
+      var stripe = Stripe(PUBLISHABLE_KEY);
+
+      // Handle any errors from Checkout
+      var handleResult = function (result) {
+        if (result.error) {
+          var displayError = document.getElementById('error-message');
+          displayError.textContent = result.error.message;
+        }
+      };
+
+      document.querySelectorAll('button').forEach(function (button) {
+        button.addEventListener('click', function (e) {
+          var mode = e.target.dataset.checkoutMode;
+          var priceId = e.target.dataset.priceId;
+          var items = [{ price: priceId, quantity: 1 }];
+
+          // Make the call to Stripe.js to redirect to the checkout page
+          // with the sku or plan ID.
+          stripe
+            .redirectToCheckout({
+              mode: mode,
+              lineItems: items,
+              successUrl:
+                DOMAIN + 'success.html?session_id={CHECKOUT_SESSION_ID}',
+              cancelUrl:
+                DOMAIN + 'canceled.html?session_id={CHECKOUT_SESSION_ID}',
+            })
+            .then(handleResult);
+        });
+      });
+    </script>
+  </body>
+</html>
